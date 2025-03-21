@@ -1,40 +1,60 @@
-// app/api/site-config/route.ts
-import { readFile } from "../../lib/editor-utils";
+// app/api/save-site-config/route.ts
+import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import type { SiteConfig } from "@/lib/site-config";
 
-export async function GET() {
-  const fileContent = readFile("/path/to/file");
-  return new Response(fileContent);
-}
-import { type NextRequest, NextResponse } from "next/server"
-import { saveSiteConfig } from "@/lib/editor-utils"
-import siteConfig, { type SiteConfig } from "@/lib/site-config"
-
-export const runtime = "edge" // Use Edge runtime for Cloudflare compatibility
-
-export async function GET() {
-  return NextResponse.json(siteConfig)
-}
-
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const data = await request.json()
+    const config: SiteConfig = await request.json();
 
-    // Validate the data
-    if (!data || typeof data !== "object") {
-      return NextResponse.json({ error: "Invalid data format" }, { status: 400 })
-    }
+    // Format the config as a TypeScript file
+    const configContent = `// Site configuration that can be edited through the admin interface
+// This file will be updated when changes are saved in the editor
 
-    // Save the updated config
-    const success = await saveSiteConfig(data as SiteConfig)
+export type Platform = {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  image: string;
+  tags: string[];
+  featured: boolean;
+  order: number;
+}
 
-    if (success) {
-      return NextResponse.json({ success: true })
-    } else {
-      return NextResponse.json({ error: "Failed to save configuration" }, { status: 500 })
-    }
+export type SiteConfig = {
+  siteName: string;
+  siteDescription: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  aboutText: string;
+  contactEmail: string;
+  socialLinks: {
+    github: string;
+    twitter: string;
+    linkedin: string;
+    instagram: string;
+  };
+  platforms: Platform[];
+}
+
+const siteConfig: SiteConfig = ${JSON.stringify(config, null, 2)};
+
+export default siteConfig;`;
+
+    // Save the config to the file system
+    await fs.promises.writeFile(
+      path.join(process.cwd(), "lib", "site-config.ts"),
+      configContent
+    );
+
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error updating site config:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Error saving site config:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to save site config" },
+      { status: 500 }
+    );
   }
 }
-

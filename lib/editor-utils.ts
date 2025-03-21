@@ -1,8 +1,11 @@
-import fs from "fs"
-import path from "path"
+// lib/editor-utils.ts
+import fs from "fs";
+import path from "path";
+
 export function readFile(filePath: string) {
   return fs.readFileSync(filePath, "utf-8");
 }
+
 import type { SiteConfig } from "./site-config"
 
 // Function to save site configuration to the file system
@@ -109,3 +112,44 @@ export async function deleteImage(imagePath: string): Promise<boolean> {
   }
 }
 
+const saveConfig = async (config: SiteConfig) => {
+  const response = await fetch("/api/save-site-config", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(config),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to save site config");
+  }
+};
+
+const uploadImage = async (file: File, destination: string) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("destination", destination);
+
+  const response = await fetch("/api/upload-image", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload image");
+  }
+
+  const data = await response.json();
+  return data.url;
+};
+
+const deleteImage = async (imagePath: string) => {
+  const response = await fetch("/api/delete-image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imagePath }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete image");
+  }
+};
