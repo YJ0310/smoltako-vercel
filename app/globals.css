@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 270 30% 23%; /* #3c294d */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 270 30% 95%;
+    --secondary-foreground: 270 30% 23%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 270 30% 95%;
+    --accent-foreground: 270 30% 23%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 270 30% 23%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 270 30% 8%; /* Darker version of #3c294d */
+    --foreground: 210 40% 98%;
+    --card: 270 30% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 270 30% 10%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 270 30% 70%; /* Lighter version of #3c294d for dark mode */
+    --primary-foreground: 270 30% 10%;
+    --secondary: 270 30% 15%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 270 30% 15%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 270 30% 15%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 270 30% 15%;
+    --input: 270 30% 15%;
+    --ring: 270 30% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(to right, #3c294d, #6b4d8a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass {
+  background: rgba(60, 41, 77, 0.1);
+  border: 1px solid rgba(60, 41, 77, 0.1);
+}
+
