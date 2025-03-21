@@ -1,5 +1,8 @@
 import fs from "fs"
 import path from "path"
+export function readFile(filePath: string) {
+  return fs.readFileSync(filePath, "utf-8");
+}
 import type { SiteConfig } from "./site-config"
 
 // Function to save site configuration to the file system

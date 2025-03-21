@@ -1,3 +1,10 @@
+// app/api/site-config/route.ts
+import { readFile } from "../../lib/editor-utils";
+
+export async function GET() {
+  const fileContent = readFile("/path/to/file");
+  return new Response(fileContent);
+}
 import { type NextRequest, NextResponse } from "next/server"
 import { saveSiteConfig } from "@/lib/editor-utils"
 import siteConfig, { type SiteConfig } from "@/lib/site-config"
