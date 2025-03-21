@@ -1,6 +1,3 @@
-// Site configuration that can be edited through the admin interface
-// This file will be updated when changes are saved in the editor
-
 export type Platform = {
   id: string
   name: string

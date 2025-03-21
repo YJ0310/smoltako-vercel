@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   title: "Smol Tako - Portfolio & Multifunction Website",
   description:
     "Welcome to Smol Tako's portfolio and multifunction website. Explore my projects and connect with me through various platforms.",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -41,6 +40,3 @@ export default function RootLayout({
   )
 }
 
-
-
-import './globals.css'
