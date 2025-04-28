@@ -100,6 +100,11 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/workspace" className="text-muted-foreground hover:text-primary transition-colors">
+                    Personal Workspace
+                  </Link>
+                </li>
+                <li>
                   <Link href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
                     Contact
                   </Link>

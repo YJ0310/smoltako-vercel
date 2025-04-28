@@ -5,6 +5,9 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeTransition } from "@/components/theme-transition"
 import { FrostedBackground } from "@/components/frosted-background"
+import { Navbar } from "@/components/navbar"
+import { Contact } from "@/components/contact"
+import { Footer } from "@/components/footer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -31,7 +34,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ThemeTransition>
-            <FrostedBackground>{children}</FrostedBackground>
+            <FrostedBackground>
+              <Navbar />
+              <div className="pt-16">{children}</div>
+              <Contact />
+              <Footer />
+            </FrostedBackground>
           </ThemeTransition>
         </ThemeProvider>
       </body>

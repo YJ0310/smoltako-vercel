@@ -1,5 +1,3 @@
-import { Header } from "@/components/workspace/header"
-import { Footer } from "@/components/workspace/footer"
 import { WorkspaceSection } from "@/components/workspace/workspace-section"
 import { LinkCard } from "@/components/workspace/link-card"
 
@@ -42,9 +40,11 @@ const financeOfficeLinks = [
 export default function WorkspacePage() {
   return (
     <main className="min-h-screen flex flex-col bg-background">
-      <Header />
-
       <div className="container mx-auto px-4 py-12 flex-grow">
+        <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+          Personal Workspace
+        </h1>
+
         <div className="grid gap-12">
           <WorkspaceSection title="Personal Links" description="Quick access to personal resources and accounts">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -75,8 +75,6 @@ export default function WorkspacePage() {
           </WorkspaceSection>
         </div>
       </div>
-
-      <Footer />
     </main>
   )
 }

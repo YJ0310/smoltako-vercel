@@ -4,8 +4,9 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Menu, X, ChevronDown } from "lucide-react"
+import { useTheme } from "next-themes"
 import { ModeToggle } from "@/components/mode-toggle"
 import { MagicButton } from "@/components/ui/magic-button"
 import { GlassCard } from "@/components/ui/glass-card"
@@ -19,6 +20,13 @@ export function Navbar() {
   const [platformsDropdownOpen, setPlatformsDropdownOpen] = useState(false)
   const [aiToolsDropdownOpen, setAiToolsDropdownOpen] = useState(false)
   const [umResourcesDropdownOpen, setUmResourcesDropdownOpen] = useState(false)
+  const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false)
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,9 +56,9 @@ export function Navbar() {
   }, [])
 
   const navItems = [
-    { href: "#about", label: "About" },
+    { href: "/#about", label: "About" },
     {
-      href: "#platforms",
+      href: "/#platforms",
       label: "Platforms",
       hasDropdown: true,
       dropdownItems: [
@@ -65,7 +73,7 @@ export function Navbar() {
       setIsOpen: setPlatformsDropdownOpen,
     },
     {
-      href: "#ai-tools",
+      href: "/#ai-tools",
       label: "AI Tools",
       hasDropdown: true,
       dropdownItems: [
@@ -81,7 +89,7 @@ export function Navbar() {
       setIsOpen: setAiToolsDropdownOpen,
     },
     {
-      href: "#um-resources",
+      href: "/#um-resources",
       label: "UM Resources",
       hasDropdown: true,
       dropdownItems: [
@@ -93,20 +101,43 @@ export function Navbar() {
       isOpen: umResourcesDropdownOpen,
       setIsOpen: setUmResourcesDropdownOpen,
     },
-    { href: "#illustrations", label: "Illustrations" },
-    { href: "#contact", label: "Contact" },
+    {
+      href: "/workspace",
+      label: "Personal Workspace",
+      hasDropdown: true,
+      dropdownItems: [
+        { href: "https://mail.google.com/mail/u/?authuser=yinjiasek@gmail.com", label: "Personal Email" },
+        { href: "https://mail.google.com/mail/u/?authuser=kewangan@myumsu.org", label: "Finance Office Email" },
+        {
+          href: "https://drive.google.com/drive/folders/11Hb8zq1RRyxMAfZ5J2Te7LKyIKB_nfcD?usp=drive_link",
+          label: "UM Stuff Drive",
+        },
+        {
+          href: "https://docs.google.com/spreadsheets/d/1IGXX55bJe2KiUfOcSTidFuO_UtC9-n5xslvqeAQq9wo/edit?usp=sharing",
+          label: "Subsidy Control Account",
+        },
+      ],
+      isOpen: workspaceDropdownOpen,
+      setIsOpen: setWorkspaceDropdownOpen,
+    },
+    { href: "/#illustrations", label: "Illustrations" },
+    { href: "/#contact", label: "Contact" },
   ]
 
   const handleDropdownToggle = (setDropdownState: React.Dispatch<React.SetStateAction<boolean>>, href: string) => {
-    // Navigate to the section
-    const sectionId = href.substring(1)
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" })
+    // Navigate to the section if it's on the homepage
+    if (href.startsWith("/#")) {
+      const sectionId = href.substring(2)
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" })
+    } else if (href.startsWith("/")) {
+      // For internal links that aren't section anchors, we'll let the Link component handle it
+    }
 
-    // Toggle the dropdown
     // Close all other dropdowns first
     if (setDropdownState !== setPlatformsDropdownOpen) setPlatformsDropdownOpen(false)
     if (setDropdownState !== setUmResourcesDropdownOpen) setUmResourcesDropdownOpen(false)
     if (setDropdownState !== setAiToolsDropdownOpen) setAiToolsDropdownOpen(false)
+    if (setDropdownState !== setWorkspaceDropdownOpen) setWorkspaceDropdownOpen(false)
 
     // Toggle the current dropdown
     setDropdownState((prev) => !prev)
@@ -142,7 +173,7 @@ export function Navbar() {
                 <>
                   <motion.button
                     className={`text-sm font-medium transition-colors relative flex items-center ${
-                      activeSection === item.href.substring(1) ? "text-primary" : "hover:text-primary"
+                      activeSection === item.href.substring(2) ? "text-primary" : "hover:text-primary"
                     }`}
                     onClick={() => handleDropdownToggle(item.setIsOpen, item.href)}
                     whileHover={{ scale: 1.05 }}
@@ -150,7 +181,7 @@ export function Navbar() {
                   >
                     {item.label}
                     <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${item.isOpen ? "rotate-180" : ""}`} />
-                    {activeSection === item.href.substring(1) && (
+                    {activeSection === item.href.substring(2) && (
                       <motion.div
                         layoutId="activeSection"
                         className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
@@ -175,8 +206,8 @@ export function Navbar() {
                               <motion.a
                                 key={idx}
                                 href={dropdownItem.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                target={dropdownItem.href.startsWith("http") ? "_blank" : undefined}
+                                rel={dropdownItem.href.startsWith("http") ? "noopener noreferrer" : undefined}
                                 className="block px-4 py-2 text-sm hover:bg-primary/10 rounded-md transition-colors"
                                 onClick={() => item.setIsOpen(false)}
                                 whileHover={{ x: 5, backgroundColor: "rgba(124, 58, 237, 0.1)" }}
@@ -196,11 +227,11 @@ export function Navbar() {
                   <Link
                     href={item.href}
                     className={`text-sm font-medium transition-colors relative ${
-                      activeSection === item.href.substring(1) ? "text-primary" : "hover:text-primary"
+                      activeSection === item.href.substring(2) ? "text-primary" : "hover:text-primary"
                     }`}
                   >
                     {item.label}
-                    {activeSection === item.href.substring(1) && (
+                    {activeSection === item.href.substring(2) && (
                       <motion.div
                         layoutId="activeSection"
                         className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
@@ -251,7 +282,7 @@ export function Navbar() {
                       <div className="space-y-2">
                         <motion.button
                           className={`text-sm font-medium transition-colors flex items-center justify-between w-full py-2 ${
-                            activeSection === item.href.substring(1) ? "text-primary" : ""
+                            activeSection === item.href.substring(2) ? "text-primary" : ""
                           }`}
                           onClick={() => handleDropdownToggle(item.setIsOpen, item.href)}
                           whileTap={{ scale: 0.95 }}
@@ -272,8 +303,8 @@ export function Navbar() {
                                 <motion.a
                                   key={idx}
                                   href={dropdownItem.href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  target={dropdownItem.href.startsWith("http") ? "_blank" : undefined}
+                                  rel={dropdownItem.href.startsWith("http") ? "noopener noreferrer" : undefined}
                                   className="block py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
                                   onClick={() => {
                                     item.setIsOpen(false)
@@ -294,7 +325,7 @@ export function Navbar() {
                         <Link
                           href={item.href}
                           className={`text-sm font-medium transition-colors hover:text-primary py-2 block ${
-                            activeSection === item.href.substring(1) ? "text-primary" : ""
+                            activeSection === item.href.substring(2) ? "text-primary" : ""
                           }`}
                           onClick={() => setIsOpen(false)}
                         >
