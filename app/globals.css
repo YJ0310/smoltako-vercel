@@ -5,47 +5,47 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 270 30% 23%; /* #3c294d */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 270 30% 95%;
-    --secondary-foreground: 270 30% 23%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 270 30% 95%;
-    --accent-foreground: 270 30% 23%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 271 29% 24%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 271 29% 24%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 270 30% 23%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 271 29% 24%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 270 30% 8%; /* Darker version of #3c294d */
-    --foreground: 210 40% 98%;
-    --card: 270 30% 10%;
-    --card-foreground: 210 40% 98%;
-    --popover: 270 30% 10%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 270 30% 70%; /* Lighter version of #3c294d for dark mode */
-    --primary-foreground: 270 30% 10%;
-    --secondary: 270 30% 15%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 270 30% 15%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 270 30% 15%;
-    --accent-foreground: 210 40% 98%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 271 70% 70%; /* Lighter purple for dark mode */
+    --primary-foreground: 0 0% 0%; /* Black text on light purple */
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 84.9%; /* Lighter muted text */
+    --accent: 271 70% 70%; /* Lighter accent for dark mode */
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 270 30% 15%;
-    --input: 270 30% 15%;
-    --ring: 270 30% 70%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 271 70% 70%;
   }
 }
 
@@ -56,13 +56,26 @@
   body {
     @apply bg-background text-foreground;
   }
-  html {
-    scroll-behavior: smooth;
-  }
 }
 
-/* Custom animations */
-@keyframes float {
+.parallax-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.floating {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
   0% {
     transform: translateY(0px);
   }
@@ -74,27 +87,141 @@
   }
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
-/* Gradient text */
-.text-gradient {
-  background: linear-gradient(to right, #3c294d, #6b4d8a);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* Glass effect */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
+.slide-in-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.slide-in-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-in-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.slide-in-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Theme transition effect */
+.theme-transition {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Bento grid styles */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .bento-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.bento-item {
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bento-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee 25s linear infinite reverse;
+}
+
+/* Dock animation */
+.dock {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  background-color: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.dark .glass {
-  background: rgba(60, 41, 77, 0.1);
-  border: 1px solid rgba(60, 41, 77, 0.1);
+.dock-item {
+  transition: transform 0.2s ease;
 }
 
+.dock-item:hover {
+  transform: scale(1.2) translateY(-10px);
+}
+
+/* Add these styles at the end of your globals.css file */
+
+/* Animated background styles */
+.animated-bg-transition {
+  transition: background-image 1.5s ease-in-out;
+}
+
+/* iOS-style parallax effect */
+.ios-parallax {
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  will-change: transform;
+}
+
+.ios-parallax-content {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Animated button styles */
+.animated-button-highlight {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}

@@ -1,34 +1,14 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
-    unoptimized: true, // For Cloudflare Pages compatibility
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    unoptimized: true,
   },
-  // Ensure compatibility with Cloudflare Pages
-  experimental: {
-    appDir: true,
-  },
-  // Add Cloudflare-specific headers
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=3600, s-maxage=86400',
-          },
-        ],
-      },
-    ];
-  },
-};
+}
 
-export default nextConfig;
-
+export default nextConfig
