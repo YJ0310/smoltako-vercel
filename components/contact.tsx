@@ -126,7 +126,7 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="py-20 md:py-32 bg-secondary/50 relative overflow-hidden">
+    <section id="contact" className="py-20 md:py-32 bg-background relative overflow-hidden">
       <div className="container px-4 mx-auto">
         <motion.div
           ref={ref}
