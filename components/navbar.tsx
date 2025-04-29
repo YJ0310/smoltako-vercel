@@ -20,7 +20,6 @@ export function Navbar() {
   const [platformsDropdownOpen, setPlatformsDropdownOpen] = useState(false)
   const [aiToolsDropdownOpen, setAiToolsDropdownOpen] = useState(false)
   const [umResourcesDropdownOpen, setUmResourcesDropdownOpen] = useState(false)
-  const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -55,7 +54,9 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // Update the navItems array to move workspace to the beginning and remove its dropdown
   const navItems = [
+    { href: "/workspace", label: "Personal Workspace" },
     { href: "/#about", label: "About" },
     {
       href: "/#platforms",
@@ -101,29 +102,11 @@ export function Navbar() {
       isOpen: umResourcesDropdownOpen,
       setIsOpen: setUmResourcesDropdownOpen,
     },
-    {
-      href: "/workspace",
-      label: "Personal Workspace",
-      hasDropdown: true,
-      dropdownItems: [
-        { href: "https://mail.google.com/mail/u/?authuser=yinjiasek@gmail.com", label: "Personal Email" },
-        { href: "https://mail.google.com/mail/u/?authuser=kewangan@myumsu.org", label: "Finance Office Email" },
-        {
-          href: "https://drive.google.com/drive/folders/11Hb8zq1RRyxMAfZ5J2Te7LKyIKB_nfcD?usp=drive_link",
-          label: "UM Stuff Drive",
-        },
-        {
-          href: "https://docs.google.com/spreadsheets/d/1IGXX55bJe2KiUfOcSTidFuO_UtC9-n5xslvqeAQq9wo/edit?usp=sharing",
-          label: "Subsidy Control Account",
-        },
-      ],
-      isOpen: workspaceDropdownOpen,
-      setIsOpen: setWorkspaceDropdownOpen,
-    },
     { href: "/#illustrations", label: "Illustrations" },
     { href: "/#contact", label: "Contact" },
   ]
 
+  // Update the handleDropdownToggle function to not include workspace dropdown
   const handleDropdownToggle = (setDropdownState: React.Dispatch<React.SetStateAction<boolean>>, href: string) => {
     // Navigate to the section if it's on the homepage
     if (href.startsWith("/#")) {
@@ -137,7 +120,6 @@ export function Navbar() {
     if (setDropdownState !== setPlatformsDropdownOpen) setPlatformsDropdownOpen(false)
     if (setDropdownState !== setUmResourcesDropdownOpen) setUmResourcesDropdownOpen(false)
     if (setDropdownState !== setAiToolsDropdownOpen) setAiToolsDropdownOpen(false)
-    if (setDropdownState !== setWorkspaceDropdownOpen) setWorkspaceDropdownOpen(false)
 
     // Toggle the current dropdown
     setDropdownState((prev) => !prev)
@@ -149,7 +131,7 @@ export function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/80 backdrop-blur-md shadow-md" : "bg-transparent"
+        scrolled ? "bg-gray-900/95 backdrop-blur-md shadow-md" : "bg-gray-900/80"
       }`}
     >
       <div className="container flex items-center justify-between h-16 px-4 mx-auto">

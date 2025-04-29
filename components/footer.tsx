@@ -80,6 +80,11 @@ export function Footer() {
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
+                  <Link href="/workspace" className="text-muted-foreground hover:text-primary transition-colors">
+                    Personal Workspace
+                  </Link>
+                </li>
+                <li>
                   <Link href="#about" className="text-muted-foreground hover:text-primary transition-colors">
                     About
                   </Link>
@@ -97,11 +102,6 @@ export function Footer() {
                 <li>
                   <Link href="#um-resources" className="text-muted-foreground hover:text-primary transition-colors">
                     UM Resources
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/workspace" className="text-muted-foreground hover:text-primary transition-colors">
-                    Personal Workspace
                   </Link>
                 </li>
                 <li>
