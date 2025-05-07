@@ -10,6 +10,25 @@ import { MagicText } from "@/components/ui/magic-text"
 import { MagicCard } from "@/components/ui/magic-card"
 import { fadeIn, staggerContainer } from "@/utils/animation-variants"
 
+// Helper function to optimize image loading
+const shimmer = (w: number, h: number) => `
+<svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="g">
+      <stop stopColor="#f6f7f8" offset="0%" />
+      <stop stopColor="#edeef1" offset="20%" />
+      <stop stopColor="#f6f7f8" offset="40%" />
+      <stop stopColor="#f6f7f8" offset="100%" />
+    </linearGradient>
+  </defs>
+  <rect width="${w}" height="${h}" fill="#f6f7f8" />
+  <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
+  <animate xlinkHref="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
+</svg>`
+
+const toBase64 = (str: string) =>
+  typeof window === "undefined" ? Buffer.from(str).toString("base64") : window.btoa(str)
+
 const platforms = [
   {
     id: 1,
@@ -117,14 +136,18 @@ function PlatformItem({
       scale: 1.03,
       boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
       transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 20,
+        type: "tween", // Change from spring to tween
+        duration: 0.4,
+        ease: "easeOut",
       },
     },
     tap: {
       scale: 0.98,
       boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
+      transition: {
+        type: "tween",
+        duration: 0.2,
+      },
     },
     initial: {
       scale: 1,
@@ -138,8 +161,9 @@ function PlatformItem({
     hover: {
       scale: 1.05,
       transition: {
-        duration: 0.3,
+        duration: 0.4,
         ease: "easeOut",
+        type: "tween", // Use tween instead of spring for smoother animation
       },
     },
   }
@@ -171,26 +195,29 @@ function PlatformItem({
         variants={fadeIn(isEven ? "right" : "left", 0.2)}
         className={`${isEven ? "lg:order-2" : ""}`}
         drag
-        dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-        dragElastic={0.05}
+        dragConstraints={{ left: -5, right: 5, top: -5, bottom: 5 }}
+        dragElastic={0.1}
       >
         <motion.div initial="initial" whileHover="hover" whileTap="tap" variants={cardVariants}>
           <MagicCard effect={index % 2 === 0 ? "spotlight" : "border"}>
             <div className="relative overflow-hidden rounded-lg shadow-xl">
-              <motion.div variants={imageVariants}>
+              <motion.div variants={imageVariants} initial="initial" whileHover="hover" className="overflow-hidden">
                 <Image
                   src={platform.image || "/placeholder.svg"}
                   alt={platform.title}
                   width={800}
                   height={500}
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover transition-all duration-300"
+                  placeholder="blur"
+                  blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(800, 500))}`}
+                  priority={index === 0} // Prioritize loading the first image
                 />
               </motion.div>
               <motion.div
                 className="absolute inset-0 bg-primary/10 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
                 initial={{ opacity: 0 }}
                 whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
               >
                 <MagicButton effect="gradient" asChild>
                   <a href={platform.link} target="_blank" rel="noopener noreferrer">
