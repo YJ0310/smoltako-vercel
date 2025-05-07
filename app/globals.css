@@ -225,3 +225,39 @@
   pointer-events: none;
   z-index: 0;
 }
+
+/* Hardware acceleration for smoother animations */
+.transform-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+/* Smooth image hover effect */
+.smooth-image-hover {
+  transition: transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.smooth-image-hover:hover {
+  transform: scale(1.05);
+}
+
+/* Smooth overlay transition */
+.smooth-overlay {
+  transition: opacity 0.3s ease-out;
+  opacity: 0;
+}
+
+.smooth-overlay:hover {
+  opacity: 1;
+}
+
+/* Button hover effect */
+.platform-button {
+  transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.platform-button:hover {
+  transform: scale(1.05);
+}

@@ -5,29 +5,8 @@ import Image from "next/image"
 import { motion, useAnimation } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 import { ArrowRight } from "lucide-react"
-import { MagicButton } from "@/components/ui/magic-button"
 import { MagicText } from "@/components/ui/magic-text"
-import { MagicCard } from "@/components/ui/magic-card"
 import { fadeIn, staggerContainer } from "@/utils/animation-variants"
-
-// Helper function to optimize image loading
-const shimmer = (w: number, h: number) => `
-<svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs>
-    <linearGradient id="g">
-      <stop stopColor="#f6f7f8" offset="0%" />
-      <stop stopColor="#edeef1" offset="20%" />
-      <stop stopColor="#f6f7f8" offset="40%" />
-      <stop stopColor="#f6f7f8" offset="100%" />
-    </linearGradient>
-  </defs>
-  <rect width="${w}" height="${h}" fill="#f6f7f8" />
-  <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
-  <animate xlinkHref="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
-</svg>`
-
-const toBase64 = (str: string) =>
-  typeof window === "undefined" ? Buffer.from(str).toString("base64") : window.btoa(str)
 
 const platforms = [
   {
@@ -130,59 +109,6 @@ function PlatformItem({
     }
   }, [controls, inView])
 
-  // Card gesture variants
-  const cardVariants = {
-    hover: {
-      scale: 1.03,
-      boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
-      transition: {
-        type: "tween", // Change from spring to tween
-        duration: 0.4,
-        ease: "easeOut",
-      },
-    },
-    tap: {
-      scale: 0.98,
-      boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
-      transition: {
-        type: "tween",
-        duration: 0.2,
-      },
-    },
-    initial: {
-      scale: 1,
-      boxShadow: "0 5px 15px rgba(0, 0, 0, 0.05)",
-    },
-  }
-
-  // Image animation variants
-  const imageVariants = {
-    initial: { scale: 1 },
-    hover: {
-      scale: 1.05,
-      transition: {
-        duration: 0.4,
-        ease: "easeOut",
-        type: "tween", // Use tween instead of spring for smoother animation
-      },
-    },
-  }
-
-  // Button animation variants
-  const buttonVariants = {
-    initial: { scale: 1, x: 0 },
-    hover: {
-      scale: 1.05,
-      x: 5,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10,
-      },
-    },
-    tap: { scale: 0.95 },
-  }
-
   return (
     <motion.div
       ref={ref}
@@ -191,43 +117,32 @@ function PlatformItem({
       animate={controls}
       className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${isEven ? "lg:flex-row-reverse" : ""}`}
     >
-      <motion.div
-        variants={fadeIn(isEven ? "right" : "left", 0.2)}
-        className={`${isEven ? "lg:order-2" : ""}`}
-        drag
-        dragConstraints={{ left: -5, right: 5, top: -5, bottom: 5 }}
-        dragElastic={0.1}
-      >
-        <motion.div initial="initial" whileHover="hover" whileTap="tap" variants={cardVariants}>
-          <MagicCard effect={index % 2 === 0 ? "spotlight" : "border"}>
-            <div className="relative overflow-hidden rounded-lg shadow-xl">
-              <motion.div variants={imageVariants} initial="initial" whileHover="hover" className="overflow-hidden">
-                <Image
-                  src={platform.image || "/placeholder.svg"}
-                  alt={platform.title}
-                  width={800}
-                  height={500}
-                  className="w-full h-auto object-cover transition-all duration-300"
-                  placeholder="blur"
-                  blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(800, 500))}`}
-                  priority={index === 0} // Prioritize loading the first image
-                />
-              </motion.div>
-              <motion.div
-                className="absolute inset-0 bg-primary/10 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+      <motion.div variants={fadeIn(isEven ? "right" : "left", 0.2)} className={`${isEven ? "lg:order-2" : ""}`}>
+        <div className="relative overflow-hidden rounded-lg shadow-xl transform-gpu">
+          {/* Image container */}
+          <div className="relative overflow-hidden">
+            <Image
+              src={platform.image || "/placeholder.svg"}
+              alt={platform.title}
+              width={800}
+              height={500}
+              className="w-full h-auto object-cover transition-transform duration-500 ease-out hover:scale-105"
+              priority={index < 2} // Prioritize loading the first two images
+            />
+
+            {/* Overlay with button - CSS only approach */}
+            <div className="absolute inset-0 bg-primary/30 backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <a
+                href={platform.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-full transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
               >
-                <MagicButton effect="gradient" asChild>
-                  <a href={platform.link} target="_blank" rel="noopener noreferrer">
-                    View Platform
-                  </a>
-                </MagicButton>
-              </motion.div>
+                View Platform
+              </a>
             </div>
-          </MagicCard>
-        </motion.div>
+          </div>
+        </div>
       </motion.div>
 
       <motion.div variants={fadeIn(isEven ? "left" : "right", 0.4)} className={`${isEven ? "lg:order-1" : ""}`}>
@@ -235,14 +150,14 @@ function PlatformItem({
           {platform.title}
         </MagicText>
         <p className="text-lg text-muted-foreground mb-6">{platform.description}</p>
-        <motion.div initial="initial" whileHover="hover" whileTap="tap" variants={buttonVariants}>
-          <MagicButton effect="shine" asChild>
-            <a href={platform.link} target="_blank" rel="noopener noreferrer" className="flex items-center">
-              Visit Site{" "}
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </a>
-          </MagicButton>
-        </motion.div>
+        <a
+          href={platform.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-full transition-all duration-300 hover:translate-x-1"
+        >
+          Visit Site <ArrowRight className="ml-2 h-4 w-4" />
+        </a>
       </motion.div>
     </motion.div>
   )
