@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Smol Tako - Portfolio",
-  description: "Personal portfolio website with a modern design",
+  description: "yjia's Personal Portfolio",
   icons: {
     icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/stelle-honkai-star-rail-stelle-c4r1eBcqArRU4WjejmyxpZznPSIlba.ico",
     shortcut:

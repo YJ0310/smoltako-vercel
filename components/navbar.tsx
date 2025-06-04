@@ -54,7 +54,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Update the navItems array to move workspace to the beginning and remove its dropdown
+  // Update the navItems array with the new AI tools
   const navItems = [
     { href: "/workspace", label: "Personal Workspace" },
     { href: "/#about", label: "About" },
@@ -78,12 +78,12 @@ export function Navbar() {
       label: "AI Tools",
       hasDropdown: true,
       dropdownItems: [
-        { href: "https://chat.deepseek.com", label: "DeepSeek Chat" },
-        { href: "https://perplexity.ai", label: "Perplexity AI" },
+        { href: "https://gemini.google.com", label: "Gemini" },
+        { href: "https://grok.com", label: "Grok" },
+        { href: "https://claude.ai", label: "Claude" },
+        { href: "https://chat.deepseek.com", label: "ChatDeepSeek" },
         { href: "https://aistudio.google.com/", label: "Gemini Studio" },
-        { href: "https://latentbox.com", label: "Latent Box" },
-        { href: "https://gemini.google.com", label: "Google Gemini" },
-        { href: "https://claude.ai", label: "Claude AI" },
+        { href: "https://perplexity.ai", label: "Perplexity" },
         { href: "https://chat.openai.com", label: "ChatGPT" },
       ],
       isOpen: aiToolsDropdownOpen,

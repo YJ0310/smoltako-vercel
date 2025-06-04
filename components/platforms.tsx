@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { motion, useAnimation } from "framer-motion"
 import { useInView } from "react-intersection-observer"
@@ -59,6 +59,20 @@ const platforms = [
   },
 ]
 
+// Loading skeleton component
+function ImageSkeleton() {
+  return (
+    <div className="w-full h-[500px] bg-gradient-to-r from-muted via-muted/50 to-muted animate-shimmer bg-[length:400%_100%] rounded-lg">
+      <div className="flex items-center justify-center h-full">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+          <p className="text-sm text-muted-foreground animate-pulse">Loading platform preview...</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function Platforms() {
   return (
     <section id="platforms" className="py-20 md:py-32 bg-secondary/50 relative overflow-hidden">
@@ -102,12 +116,23 @@ function PlatformItem({
     threshold: 0.1,
     triggerOnce: true,
   })
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   useEffect(() => {
     if (inView) {
       controls.start("show")
     }
   }, [controls, inView])
+
+  const handleImageLoad = () => {
+    setImageLoaded(true)
+  }
+
+  const handleImageError = () => {
+    setImageError(true)
+    setImageLoaded(true) // Hide loading indicator even on error
+  }
 
   return (
     <motion.div
@@ -119,29 +144,81 @@ function PlatformItem({
     >
       <motion.div variants={fadeIn(isEven ? "right" : "left", 0.2)} className={`${isEven ? "lg:order-2" : ""}`}>
         <div className="relative overflow-hidden rounded-lg shadow-xl transform-gpu">
-          {/* Image container */}
-          <div className="relative overflow-hidden">
-            <Image
-              src={platform.image || "/placeholder.svg"}
-              alt={platform.title}
-              width={800}
-              height={500}
-              className="w-full h-auto object-cover transition-transform duration-500 ease-out hover:scale-105"
-              priority={index < 2} // Prioritize loading the first two images
-            />
-
-            {/* Overlay with button - CSS only approach */}
-            <div className="absolute inset-0 bg-primary/30 backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-              <a
-                href={platform.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-full transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
-              >
-                View Platform
-              </a>
+          {/* Loading indicator */}
+          {!imageLoaded && (
+            <div className="absolute inset-0 z-10">
+              <ImageSkeleton />
             </div>
+          )}
+
+          {/* Image container */}
+          <div
+            className={`relative overflow-hidden transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          >
+            {imageError ? (
+              // Error state
+              <div className="w-full h-[500px] bg-muted flex items-center justify-center rounded-lg">
+                <div className="text-center space-y-2">
+                  <div className="w-16 h-16 mx-auto bg-muted-foreground/20 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-8 h-8 text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Failed to load image</p>
+                  <a
+                    href={platform.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-primary hover:text-primary/80 text-sm underline"
+                  >
+                    Visit platform directly
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <Image
+                src={platform.image || "/placeholder.svg"}
+                alt={platform.title}
+                width={800}
+                height={500}
+                className="w-full h-auto object-cover transition-transform duration-500 ease-out hover:scale-105"
+                priority={index < 2} // Prioritize loading the first two images
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+              />
+            )}
+
+            {/* Overlay with button - only show when image is loaded */}
+            {imageLoaded && !imageError && (
+              <div className="absolute inset-0 bg-primary/30 backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <a
+                  href={platform.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-full transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
+                >
+                  View Platform
+                </a>
+              </div>
+            )}
           </div>
+
+          {/* Loading progress indicator */}
+          {!imageLoaded && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-muted">
+              <div className="h-full bg-primary animate-loading-bar"></div>
+            </div>
+          )}
         </div>
       </motion.div>
 
