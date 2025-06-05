@@ -54,7 +54,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Update the navItems array with the new AI tools
+  // Update the navItems array with the new UM resource
   const navItems = [
     { href: "/workspace", label: "Personal Workspace" },
     { href: "/#about", label: "About" },
@@ -98,6 +98,7 @@ export function Navbar() {
         { href: "https://maya.um.edu.my/sitsvision/wrd/SIW_LGN", label: "MAYA" },
         { href: "https://mysis.um.edu.my/", label: "MYSIS" },
         { href: "https://helpdesk.um.edu.my/", label: "Helpdesk" },
+        { href: "https://research.ebsco.com/c/vy25p4/search", label: "EBSCO Research" },
       ],
       isOpen: umResourcesDropdownOpen,
       setIsOpen: setUmResourcesDropdownOpen,

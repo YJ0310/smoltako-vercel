@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { motion, useAnimation } from "framer-motion"
 import { useInView } from "react-intersection-observer"
-import { ExternalLink, BookOpen, Calendar, User, HelpCircle } from "lucide-react"
+import { ExternalLink, BookOpen, Calendar, User, HelpCircle, Search } from "lucide-react"
 import { MagicCard } from "@/components/ui/magic-card"
 import { MagicText } from "@/components/ui/magic-text"
 import { AnimatedBackground } from "@/components/ui/animated-background"
@@ -45,6 +45,13 @@ const umResources = [
     url: "https://helpdesk.um.edu.my/",
     icon: <HelpCircle className="h-5 w-5" />,
     description: "Technical support and assistance portal",
+  },
+  {
+    id: 5,
+    name: "EBSCO Research",
+    url: "https://research.ebsco.com/c/vy25p4/search",
+    icon: <Search className="h-5 w-5" />,
+    description: "Search academic resources and research databases",
   },
 ]
 
@@ -119,7 +126,7 @@ export function UmResources() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {umResources.map((resource, index) => (
               <motion.div
                 key={resource.id}
