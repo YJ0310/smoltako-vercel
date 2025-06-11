@@ -2,12 +2,12 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { useTheme } from "next-themes"
-import { ModeToggle } from "@/components/mode-toggle"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { MagicButton } from "@/components/ui/magic-button"
 import { GlassCard } from "@/components/ui/glass-card"
 import { MagicCard } from "@/components/ui/magic-card"
@@ -22,6 +22,7 @@ export function Navbar() {
   const [umResourcesDropdownOpen, setUmResourcesDropdownOpen] = useState(false)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -52,6 +53,23 @@ export function Navbar() {
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setPlatformsDropdownOpen(false)
+        setAiToolsDropdownOpen(false)
+        setUmResourcesDropdownOpen(false)
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
   }, [])
 
   // Update the navItems array with the new UM resource
@@ -107,7 +125,7 @@ export function Navbar() {
     { href: "/#contact", label: "Contact" },
   ]
 
-  // Update the handleDropdownToggle function to not include workspace dropdown
+  // Update the handleDropdownToggle function with animations
   const handleDropdownToggle = (setDropdownState: React.Dispatch<React.SetStateAction<boolean>>, href: string) => {
     // Navigate to the section if it's on the homepage
     if (href.startsWith("/#")) {
@@ -126,16 +144,70 @@ export function Navbar() {
     setDropdownState((prev) => !prev)
   }
 
+  // Dropdown animation variants
+  const dropdownVariants = {
+    hidden: {
+      opacity: 0,
+      y: -10,
+      scale: 0.95,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 500,
+        damping: 30,
+        duration: 0.2,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: -10,
+      scale: 0.95,
+      transition: {
+        duration: 0.15,
+      },
+    },
+  }
+
+  // Mobile menu animation variants
+  const mobileMenuVariants = {
+    hidden: {
+      opacity: 0,
+      height: 0,
+    },
+    visible: {
+      opacity: 1,
+      height: "auto",
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+      },
+    },
+    exit: {
+      opacity: 0,
+      height: 0,
+      transition: {
+        duration: 0.2,
+        ease: "easeInOut",
+      },
+    },
+  }
+
   return (
     <motion.header
+      ref={navRef}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/80 backdrop-blur-md shadow-md" : "bg-background/60"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
     >
-      <div className="container flex items-center justify-between h-16 px-4 mx-auto">
+      {/* Glass effect background */}
+      <div className="absolute inset-0 bg-background/70 backdrop-blur-md border-b border-border/50" />
+
+      <div className="container flex items-center justify-between h-16 px-4 mx-auto relative z-10">
         <Link href="/" className="flex items-center space-x-2">
           <InteractiveImage
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-1fZgVyRDaNiKDdvGrwyQx5qOkoK8FG.png"
@@ -163,7 +235,9 @@ export function Navbar() {
                     whileTap={{ scale: 0.95 }}
                   >
                     {item.label}
-                    <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${item.isOpen ? "rotate-180" : ""}`} />
+                    <motion.div animate={{ rotate: item.isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    </motion.div>
                     {activeSection === item.href.substring(2) && (
                       <motion.div
                         layoutId="activeSection"
@@ -174,10 +248,10 @@ export function Navbar() {
                   <AnimatePresence>
                     {item.isOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.2 }}
+                        variants={dropdownVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
                         className="absolute top-full left-0 mt-2 w-56 z-50"
                       >
                         <MagicCard
@@ -195,6 +269,9 @@ export function Navbar() {
                                 onClick={() => item.setIsOpen(false)}
                                 whileHover={{ x: 5, backgroundColor: "rgba(124, 58, 237, 0.1)" }}
                                 whileTap={{ scale: 0.98 }}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: idx * 0.05 }}
                               >
                                 {dropdownItem.label}
                               </motion.a>
@@ -225,19 +302,21 @@ export function Navbar() {
               )}
             </div>
           ))}
-          <ModeToggle />
+          <ThemeToggle />
         </nav>
 
         {/* Mobile Navigation Toggle */}
         <div className="flex items-center md:hidden space-x-4">
-          <ModeToggle />
+          <ThemeToggle />
           <GlassCard
             className="p-2 cursor-pointer"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(!isOpen)}
           >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <motion.div animate={{ rotate: isOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </motion.div>
           </GlassCard>
         </div>
       </div>
@@ -246,11 +325,11 @@ export function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-background/95 backdrop-blur-md"
+            variants={mobileMenuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="md:hidden bg-background/95 backdrop-blur-md border-b border-border/50"
           >
             <div className="container px-4 py-4 mx-auto">
               <nav className="flex flex-col space-y-4">
@@ -271,7 +350,9 @@ export function Navbar() {
                           whileTap={{ scale: 0.95 }}
                         >
                           <span>{item.label}</span>
-                          <ChevronDown className={`h-4 w-4 transition-transform ${item.isOpen ? "rotate-180" : ""}`} />
+                          <motion.div animate={{ rotate: item.isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                            <ChevronDown className="h-4 w-4" />
+                          </motion.div>
                         </motion.button>
                         <AnimatePresence>
                           {item.isOpen && (
@@ -295,6 +376,9 @@ export function Navbar() {
                                   }}
                                   whileHover={{ x: 5, color: "hsl(var(--primary))" }}
                                   whileTap={{ scale: 0.98 }}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: idx * 0.05 }}
                                 >
                                   {dropdownItem.label}
                                 </motion.a>

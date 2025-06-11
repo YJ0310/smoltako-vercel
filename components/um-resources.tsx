@@ -1,21 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { motion, useAnimation } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 import { ExternalLink, BookOpen, Calendar, User, HelpCircle, Search } from "lucide-react"
 import { MagicCard } from "@/components/ui/magic-card"
 import { MagicText } from "@/components/ui/magic-text"
-import { AnimatedBackground } from "@/components/ui/animated-background"
 import { AnimatedButton } from "@/components/ui/animated-button"
 import { fadeIn, staggerContainer } from "@/utils/animation-variants"
-
-const umWallpapers = [
-  "/images/um-wallpaper-1.jpeg",
-  "/images/um-wallpaper-2.jpeg",
-  "/images/um-wallpaper-3.jpeg",
-  "/images/um-wallpaper-4.jpeg",
-]
 
 const umResources = [
   {
@@ -62,13 +54,7 @@ export function UmResources() {
     triggerOnce: true,
   })
 
-  const [randomizedWallpapers, setRandomizedWallpapers] = useState<string[]>([])
-
   useEffect(() => {
-    // Randomize the wallpapers order
-    const shuffled = [...umWallpapers].sort(() => 0.5 - Math.random())
-    setRandomizedWallpapers(shuffled)
-
     if (inView) {
       controls.start("show")
     }
@@ -106,22 +92,14 @@ export function UmResources() {
   }
 
   return (
-    <section id="um-resources" className="relative py-20 overflow-hidden">
-      <AnimatedBackground
-        images={randomizedWallpapers}
-        interval={10000}
-        overlayOpacity={0.6}
-        blurAmount={5}
-        className="absolute inset-0"
-      />
-
+    <section id="um-resources" className="py-20 bg-background relative overflow-hidden">
       <div className="container px-4 mx-auto relative z-10">
         <motion.div ref={ref} variants={staggerContainer()} initial="hidden" animate={controls} className="space-y-16">
           <motion.div variants={fadeIn("up")} className="text-center max-w-3xl mx-auto">
-            <MagicText effect="gradient" as="h2" className="text-3xl md:text-4xl font-bold mb-6 text-white">
+            <MagicText effect="gradient" as="h2" className="text-3xl md:text-4xl font-bold mb-6">
               UM Useful Links
             </MagicText>
-            <p className="text-lg text-white/80">
+            <p className="text-lg text-muted-foreground">
               Essential University of Malaya resources for students and faculty members.
             </p>
           </motion.div>
@@ -138,28 +116,28 @@ export function UmResources() {
               >
                 <motion.div initial="initial" whileHover="hover" whileTap="tap" variants={cardVariants}>
                   <MagicCard className="h-full">
-                    <div className="p-6 backdrop-blur-md bg-white/10 rounded-xl h-full">
+                    <div className="p-6 h-full">
                       <div className="flex items-start space-x-4">
                         <motion.div
-                          className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0"
+                          className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0"
                           variants={iconVariants}
                         >
                           {resource.icon}
                         </motion.div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-xl font-semibold text-white">{resource.name}</h3>
+                            <h3 className="text-xl font-semibold">{resource.name}</h3>
                             <AnimatedButton
                               variant="ghost"
                               size="icon"
-                              className="rounded-full bg-white/10 text-white hover:bg-white/20"
+                              className="rounded-full bg-primary/10 hover:bg-primary/20"
                               onClick={() => window.open(resource.url, "_blank")}
                             >
                               <ExternalLink className="h-4 w-4" />
                               <span className="sr-only">Visit {resource.name}</span>
                             </AnimatedButton>
                           </div>
-                          <p className="text-white/70">{resource.description}</p>
+                          <p className="text-muted-foreground">{resource.description}</p>
                         </div>
                       </div>
                     </div>
