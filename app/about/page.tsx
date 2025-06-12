@@ -6,6 +6,7 @@ import { Download, ExternalLink, Mail, Phone, Linkedin, MapPin, Calendar, Briefc
 import { MagicText } from "@/components/ui/magic-text"
 import { MagicCard } from "@/components/ui/magic-card"
 import { MagicButton } from "@/components/ui/magic-button"
+import { GlassCard } from "@/components/ui/glass-card" // Import GlassCard
 import { fadeIn, staggerContainer } from "@/utils/animation-variants"
 
 const contactInfo = {
@@ -293,6 +294,31 @@ function ExperienceSection({ experiences }: { experiences: typeof experiences })
                     </div>
                     <p className="text-muted-foreground text-sm mb-3">{exp.duration}</p>
                     <p className="text-muted-foreground mb-4">{exp.summary}</p>
+                    {/* Simple positions preview for non-top sections */}
+                    {!exp.isTopSection && (
+                      <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {exp.positions.map((position, idx) => (
+                          <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.05 }}
+                            whileHover={{ scale: 1.03, boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)" }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <GlassCard
+                              intensity="light"
+                              color="neutral"
+                              className="p-3 rounded-lg border border-border/50"
+                              hoverEffect={false} // Handled by parent motion.div
+                            >
+                              <p className="font-medium text-foreground text-sm">{position.title}</p>
+                              <p className="text-muted-foreground text-xs">{position.period}</p>
+                            </GlassCard>
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Key Achievements Pills */}
                     <div className="flex flex-wrap gap-2 mb-4">
