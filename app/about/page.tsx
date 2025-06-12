@@ -483,44 +483,6 @@ export default function AboutPage() {
             </div>
           </motion.div>
 
-          {/* Resume Viewer Section */}
-          <motion.div variants={fadeIn("up", 0.2)} className="max-w-4xl mx-auto">
-            <MagicCard effect="spotlight" className="p-6">
-              <div className="flex flex-col md:flex-row items-center justify-between mb-6">
-                <h3 className="text-2xl font-semibold mb-4 md:mb-0">Resume</h3>
-                <div className="flex gap-4">
-                  <MagicButton
-                    effect="gradient"
-                    onClick={() => setShowResume(!showResume)}
-                    className="flex items-center gap-2"
-                  >
-                    {showResume ? "Hide Resume" : "View Resume"}
-                    <ExternalLink className="h-4 w-4" />
-                  </MagicButton>
-                  <MagicButton
-                    effect="shine"
-                    onClick={() => window.open("/resume.pdf", "_blank")}
-                    className="flex items-center gap-2"
-                  >
-                    Download PDF
-                    <Download className="h-4 w-4" />
-                  </MagicButton>
-                </div>
-              </div>
-
-              {showResume && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "600px" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="w-full border rounded-lg overflow-hidden"
-                >
-                  <iframe src="/resume.pdf" className="w-full h-full" title="Resume PDF" />
-                </motion.div>
-              )}
-            </MagicCard>
-          </motion.div>
 
           {/* Contact Information */}
           <motion.div variants={fadeIn("up", 0.3)} className="max-w-4xl mx-auto">
