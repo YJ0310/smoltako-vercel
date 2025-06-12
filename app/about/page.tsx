@@ -2,18 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import {
-  Download,
-  ExternalLink,
-  Mail,
-  Phone,
-  Linkedin,
-  MapPin,
-  Calendar,
-  Briefcase,
-  GraduationCap,
-  ChevronDown,
-} from "lucide-react"
+import { Download, ExternalLink, Mail, Phone, Linkedin, MapPin, Calendar, Briefcase, GraduationCap } from "lucide-react"
 import { MagicText } from "@/components/ui/magic-text"
 import { MagicCard } from "@/components/ui/magic-card"
 import { MagicButton } from "@/components/ui/magic-button"
@@ -34,7 +23,7 @@ const experiences = [
     company: "Universiti Malaya Students' Union",
     duration: "7 months",
     isCurrent: true,
-    isMainRole: true,
+    isTopSection: true,
     summary: "Leading IT development and financial management for 60+ student organizations",
     keyAchievements: ["Developed TransFinance platform", "Managed RM63,000+ in funds", "Supported 64+ events"],
     positions: [
@@ -75,7 +64,7 @@ const experiences = [
     company: "Kongres Mahasiswa Universiti Malaya",
     duration: "2 months",
     isCurrent: false,
-    isMainRole: true,
+    isTopSection: true,
     summary: "Led technical operations for inaugural student congress with 84 participants",
     keyAchievements: ["Head of Technical Bureau", "Custom timer tool development", "16+ hours of duty"],
     positions: [
@@ -107,7 +96,7 @@ const experiences = [
     company: "Kuayue Song Composing Concert",
     duration: "7 months",
     isCurrent: false,
-    isMainRole: true,
+    isTopSection: true,
     summary: "Managed publicity and media content for major cultural concert event",
     keyAchievements: ["Complete visual identity design", "Social media management", "Video production"],
     positions: [
@@ -128,7 +117,7 @@ const experiences = [
     company: "Event Management Roles",
     duration: "Various",
     isCurrent: false,
-    isMainRole: false,
+    isTopSection: false,
     summary: "PA system management and media support for multiple university events",
     keyAchievements: ["1000+ attendees events", "Audio-visual expertise", "Real-time troubleshooting"],
     positions: [
@@ -159,7 +148,7 @@ const experiences = [
     company: "Teaching & Academic Roles",
     duration: "Various",
     isCurrent: false,
-    isMainRole: false,
+    isTopSection: false,
     summary: "Educational support and academic leadership across multiple institutions",
     keyAchievements: ["150+ students taught", "LinkedIn workshop director", "Academic executive"],
     positions: [
@@ -199,7 +188,7 @@ const experiences = [
     company: "Early Career & Part-time Roles",
     duration: "Various",
     isCurrent: false,
-    isMainRole: false,
+    isTopSection: false,
     summary: "Customer service, kitchen operations, and financial management experience",
     keyAchievements: ["500+ gift baskets assembled", "Financial management", "Team leadership"],
     positions: [
@@ -238,15 +227,45 @@ const experiences = [
 ]
 
 function ExperienceSection({ experiences }: { experiences: typeof experiences }) {
-  const [expandedItems, setExpandedItems] = useState<number[]>([])
   const [showDetailed, setShowDetailed] = useState<number[]>([])
-
-  const toggleExpanded = (id: number) => {
-    setExpandedItems((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
-  }
 
   const toggleDetailed = (id: number) => {
     setShowDetailed((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+  }
+
+  // Card hover variants
+  const cardHoverVariants = {
+    initial: {
+      scale: 1,
+      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    },
+    hover: {
+      scale: 1.02,
+      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+  }
+
+  // Button hover variants
+  const buttonHoverVariants = {
+    initial: { scale: 1, y: 0 },
+    hover: {
+      scale: 1.05,
+      y: -2,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+      },
+    },
+    tap: {
+      scale: 0.95,
+      y: 0,
+    },
   }
 
   return (
@@ -258,95 +277,56 @@ function ExperienceSection({ experiences }: { experiences: typeof experiences })
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: exp.id * 0.1 }}
         >
-          <MagicCard
-            effect="spotlight"
-            className={`overflow-hidden transition-all duration-300 ${
-              expandedItems.includes(exp.id) ? "ring-2 ring-primary/20" : ""
-            }`}
-          >
-            {/* Simplified Card View */}
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-3 h-3 rounded-full ${exp.isCurrent ? "bg-green-500" : "bg-gray-400"}`} />
-                    <h4 className="text-xl font-semibold">{exp.company}</h4>
-                    {exp.isCurrent && (
-                      <span className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 text-xs rounded-full">
-                        Current
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-muted-foreground text-sm mb-3">{exp.duration}</p>
-                  <p className="text-muted-foreground mb-4">{exp.summary}</p>
-
-                  {/* Key Achievements Pills */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {exp.keyAchievements.map((achievement, idx) => (
-                      <span key={idx} className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                        {achievement}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2 ml-4">
-                  {/* Show Details Button */}
-                  {!showDetailed.includes(exp.id) && (
-                    <motion.button
-                      onClick={() => toggleDetailed(exp.id)}
-                      className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      View Details
-                    </motion.button>
-                  )}
-
-                  {/* Expand/Collapse for non-main roles */}
-                  {!exp.isMainRole && (
-                    <motion.button
-                      onClick={() => toggleExpanded(exp.id)}
-                      className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <motion.div
-                        animate={{ rotate: expandedItems.includes(exp.id) ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ChevronDown className="h-4 w-4" />
-                      </motion.div>
-                    </motion.button>
-                  )}
-                </div>
-              </div>
-
-              {/* Detailed View */}
-              <AnimatePresence>
-                {(showDetailed.includes(exp.id) || (exp.isMainRole && !showDetailed.includes(exp.id))) && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="border-t pt-4"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="h-5 w-5 text-primary" />
-                        <span className="font-medium">Detailed Experience</span>
-                      </div>
-                      {showDetailed.includes(exp.id) && (
-                        <motion.button
-                          onClick={() => toggleDetailed(exp.id)}
-                          className="px-3 py-1 text-sm text-muted-foreground hover:text-primary transition-colors"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          Hide Details
-                        </motion.button>
+          <motion.div variants={cardHoverVariants} initial="initial" whileHover="hover" className="cursor-pointer">
+            <MagicCard effect="spotlight" className="overflow-hidden transition-all duration-300">
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`w-3 h-3 rounded-full ${exp.isCurrent ? "bg-green-500" : "bg-gray-400"}`} />
+                      <h4 className="text-xl font-semibold">{exp.company}</h4>
+                      {exp.isCurrent && (
+                        <span className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 text-xs rounded-full">
+                          Current
+                        </span>
                       )}
+                    </div>
+                    <p className="text-muted-foreground text-sm mb-3">{exp.duration}</p>
+                    <p className="text-muted-foreground mb-4">{exp.summary}</p>
+
+                    {/* Key Achievements Pills */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {exp.keyAchievements.map((achievement, idx) => (
+                        <span key={idx} className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                          {achievement}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* View Details Button - Only for non-top sections */}
+                  {!exp.isTopSection && (
+                    <div className="ml-4">
+                      <motion.button
+                        onClick={() => toggleDetailed(exp.id)}
+                        variants={buttonHoverVariants}
+                        initial="initial"
+                        whileHover="hover"
+                        whileTap="tap"
+                        className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium transition-colors shadow-md hover:shadow-lg"
+                      >
+                        {showDetailed.includes(exp.id) ? "Hide Details" : "View Details"}
+                      </motion.button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Always show detailed view for top sections */}
+                {exp.isTopSection && (
+                  <div className="border-t pt-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Briefcase className="h-5 w-5 text-primary" />
+                      <span className="font-medium">Detailed Experience</span>
                     </div>
 
                     <div className="space-y-6">
@@ -378,33 +358,59 @@ function ExperienceSection({ experiences }: { experiences: typeof experiences })
                         </motion.div>
                       ))}
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
 
-              {/* Collapsed Content for Non-Main Roles */}
-              <AnimatePresence>
-                {!exp.isMainRole && expandedItems.includes(exp.id) && !showDetailed.includes(exp.id) && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="border-t pt-4"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {exp.positions.map((position, idx) => (
-                        <div key={idx} className="p-3 bg-secondary/50 rounded-lg">
-                          <h6 className="font-medium text-sm">{position.title}</h6>
-                          <p className="text-xs text-muted-foreground">{position.period}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </MagicCard>
+                {/* Detailed View for non-top sections - only when toggled */}
+                <AnimatePresence>
+                  {!exp.isTopSection && showDetailed.includes(exp.id) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="border-t pt-4"
+                    >
+                      <div className="flex items-center gap-2 mb-4">
+                        <Briefcase className="h-5 w-5 text-primary" />
+                        <span className="font-medium">Detailed Experience</span>
+                      </div>
+
+                      <div className="space-y-6">
+                        {exp.positions.map((position, posIndex) => (
+                          <motion.div
+                            key={posIndex}
+                            className="border-l-2 border-primary/20 pl-4"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: posIndex * 0.1 }}
+                          >
+                            <h5 className="font-medium text-lg">{position.title}</h5>
+                            <p className="text-sm text-muted-foreground mb-2">{position.period}</p>
+                            <p className="text-sm text-muted-foreground mb-3">{position.location}</p>
+                            <ul className="space-y-2">
+                              {position.highlights.map((highlight, highlightIndex) => (
+                                <motion.li
+                                  key={highlightIndex}
+                                  className="text-sm text-muted-foreground flex items-start gap-2"
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: posIndex * 0.1 + highlightIndex * 0.05 }}
+                                >
+                                  <span className="w-1 h-1 bg-primary rounded-full mt-2 flex-shrink-0" />
+                                  {highlight}
+                                </motion.li>
+                              ))}
+                            </ul>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </MagicCard>
+          </motion.div>
         </motion.div>
       ))}
     </div>
