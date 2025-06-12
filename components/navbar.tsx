@@ -72,10 +72,10 @@ export function Navbar() {
     }
   }, [])
 
-  // Update the navItems array with the new UM resource
+  // Update the navItems array with the About page
   const navItems = [
     { href: "/workspace", label: "Personal Workspace" },
-    { href: "/#about", label: "About" },
+    { href: "/about", label: "About Me" },
     {
       href: "/#platforms",
       label: "Platforms",
